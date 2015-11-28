@@ -37,7 +37,7 @@
 module TastierMachine.Machine where
 import qualified TastierMachine.Instructions as Instructions
 import Data.Int (Int8, Int16)
-import Data.Char (intToDigit)
+import Data.Char (intToDigit, chr)
 import Numeric (showIntAtBase)
 import Data.Bits (complement)
 import Data.Array ((//), (!), Array, elems)
@@ -204,6 +204,16 @@ run = do
           tell $ [show $ smem ! (rtp-1)]
           put $ machine { rpc = rpc + 1, rtp = rtp - 1 }
           run
+
+        Instructions.WriteS -> do
+          let startAddr = smem ! (rtp - 1) - 4
+          let length = dmem ! (startAddr + 1)
+          tell [buildStr length startAddr]
+          put $ machine { rpc = rpc + 1, rtp = rtp - 1}
+          run
+          where
+            buildStr 0 _ = ""
+            buildStr len addr = ((chr . fromEnum) (dmem ! addr)) : buildStr (len - 1) (addr - 1)
 
         Instructions.Leave  -> do
           {-

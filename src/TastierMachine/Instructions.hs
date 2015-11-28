@@ -26,6 +26,7 @@ data Instruction = Add
                  | Leave
                  | Read
                  | Write
+                 | WriteS
                  | Halt
                  | Dup
                  | Nop
