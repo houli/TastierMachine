@@ -110,6 +110,7 @@ parseInstruction lineNumber text =
     ["Read"]        -> Right $ I.Nullary I.Read
     ["Write"]       -> Right $ I.Nullary I.Write
     ["WriteS"]      -> Right $ I.Nullary I.WriteS
+    ["WriteC"]      -> Right $ I.Nullary I.WriteC
     ["Halt"]        -> Right $ I.Nullary I.Halt
     ["Dup"]         -> Right $ I.Nullary I.Dup
     ["Nop"]         -> Right $ I.Nullary I.Nop

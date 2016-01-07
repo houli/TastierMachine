@@ -215,6 +215,11 @@ run = do
             buildStr 0 _ = ""
             buildStr len addr = ((chr . fromEnum) (dmem ! addr)) : buildStr (len - 1) (addr - 1)
 
+        Instructions.WriteC -> do
+          tell $ [[(chr . fromEnum) $ smem ! (rtp - 1)]]
+          put $ machine { rpc = rpc + 1, rtp = rtp - 1 }
+          run
+
         Instructions.Leave  -> do
           {-
             When we're leaving a procedure, we have to reset rbp to the
