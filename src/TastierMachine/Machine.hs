@@ -98,6 +98,10 @@ run = do
           put $ machine { rpc = rpc + 1 }
           run
 
+        Instructions.Pop -> do
+          put $ machine { rpc = rpc + 1, rtp = rtp - 1 }
+          run
+
         Instructions.Add -> do
           let a = smem ! (rtp-1)
           let b = smem ! (rtp-2)

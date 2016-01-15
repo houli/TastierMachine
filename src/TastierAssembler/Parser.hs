@@ -114,6 +114,7 @@ parseInstruction lineNumber text =
     ["Halt"]        -> Right $ I.Nullary I.Halt
     ["Dup"]         -> Right $ I.Nullary I.Dup
     ["Nop"]         -> Right $ I.Nullary I.Nop
+    ["Pop"]         -> Right $ I.Nullary I.Pop
     _               -> error $ "Line " ++ show lineNumber ++ ": " ++
                                "unknown instruction " ++ show text
   where
