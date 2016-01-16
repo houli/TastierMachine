@@ -61,12 +61,26 @@ parseInstruction lineNumber text =
           Just x -> Right $ I.Unary I.LoadG (fromIntegral $ fst x)
           _ -> Left $ ["LoadG", a]
 
+    ["LoadArr", a]  ->
+      let a' = B.readInteger a
+      in
+        case a' of
+          Just x -> Right $ I.Unary I.LoadArr (fromIntegral $ fst x)
+          _ -> Left $ ["LoadArr", a]
+
     ["StoG", a]     ->
       let a' = B.readInteger a
       in
         case a' of
           Just x -> Right $ I.Unary I.StoG (fromIntegral $ fst x)
           _ -> Left $ ["StoG", a]
+
+    ["StoArr", a]   ->
+      let a' = B.readInteger a
+      in
+        case a' of
+          Just x -> Right $ I.Unary I.StoArr (fromIntegral $ fst x)
+          _ -> Left $ ["StoArr", a]
 
     ["Const", a]    ->
       let a' = B.readInteger a

@@ -14,7 +14,9 @@ data Instruction = Add
                  | Gteq
                  | Neg
                  | Load
+                 | LoadArr
                  | Sto
+                 | StoArr
                  | Call
                  | LoadG
                  | StoG
@@ -42,5 +44,5 @@ data InstructionWord = Nullary Instruction
 arguments :: Instruction -> Int
 arguments i =
   if i `elem` [Load, Sto, Call] then 2
-  else if i `elem` [LoadG, StoG, Const, Enter, Jmp, FJmp] then 1
+  else if i `elem` [LoadG, LoadArr, StoG, StoArr, Const, Enter, Jmp, FJmp] then 1
   else 0

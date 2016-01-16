@@ -258,6 +258,14 @@ run = do
                                  dmem = (dmem // [(a-3, (smem ! (rtp-1)))]) }
           run
 
+        Instructions.StoArr -> do
+          let baseAddress = smem ! (rtp - 1)
+          let valToStore = smem ! (rtp - 2)
+          let storeAddress = followArrayPointers a baseAddress 2 smem dmem rtp
+          put $ machine { rpc = rpc + 1, rtp = rtp - a - 2,
+                          dmem = (dmem // [(storeAddress, valToStore)])}
+          run
+
         Instructions.LoadG  -> do
           -- memory mapped control and status registers implemented here
           case a of
@@ -269,6 +277,12 @@ run = do
                                  smem = (smem // [(rtp, rbp)]) }
             _ -> put $ machine { rpc = rpc + 1, rtp = rtp + 1,
                                  smem = (smem // [(rtp, (dmem ! (a-3)))]) }
+          run
+
+        Instructions.LoadArr -> do
+          let baseAddress = smem ! (rtp - 1)
+          put $ machine { rpc = rpc + 1, rtp = rtp - a,
+                          smem = (smem // [((rtp - a - 1), dmem ! followArrayPointers a baseAddress 1 smem dmem rtp)]) }
           run
 
         Instructions.Const  -> do
@@ -347,6 +361,21 @@ run = do
           put $ machine { rpc = b, rtp = rtp + 2,
                           smem = (smem // [(rtp, (rpc+1)), (rtp+1, a)]) }
           run
+
+followArrayPointers 1 address offset smem dmem rtp =
+  case checkBounds 1 address offset smem dmem rtp of
+    True -> address - ((smem ! (rtp - 1 - offset)) + 4)
+    False -> error "Array index out of bounds"
+followArrayPointers x address offset smem dmem rtp =
+  case checkBounds x address offset smem dmem rtp of
+    True -> followArrayPointers (x - 1) (dmem ! (address - ((smem ! (rtp - x - offset)) + 4))) offset smem dmem rtp
+    False -> error "Array index out of bounds"
+
+checkBounds x address offset smem dmem rtp =
+  if (smem ! (rtp - x - offset)) < (dmem ! (address - 3)) && (smem ! (rtp - x - offset) >= 0)
+  then True
+  else False
+
 
 {-
   followChain follows the static link chain to find the absolute address in
